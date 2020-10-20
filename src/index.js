@@ -22,26 +22,46 @@ module.exports = function check(str, bracketsConfig) {
     }
 	return true;
 	*/
-	const arr = str.split();
-	const counters = new Array(bracketsConfig.length);
-	counters.fill(0);
-	for (let i = 0; i < arr.length; i++) {
-		for (let j = 0; j < bracketsConfig.length; j++) {
-			if (bracketsConfig[j][0] !== bracketsConfig[j][1]) {
-				if (arr[i] === bracketsConfig[j][0]) {
-					counters[j] += 1;
-				}
-				if (arr[i] === bracketsConfig[j][1]) {
-					counters[j] -= 1;
-				}
-				for (let k = 0; k < counters.length; k++) {
-					if (counters[k] < 0) return false;
-				}
+	function peek(stack) {
+		return stack[stack.length - 1]
+	}
+
+	// creating stack
+    let stack = [];
+    stack.push();
+    stack.pop();
+    // iterate for each letter of the str
+    for (let i = 0; i < str.length; i++) {
+        let letter = str.charAt(i);
+        //if letter is an opening paren push it to the stack
+        if (letter === "(") {
+            stack.push(letter);
+        } else if (letter === ")") {
+            //if letter is an closing parent make sure it has a matching paren
+            if (peek(stack) === "(") {
+                stack.pop();
+            } else {
+                return false;
+            }
+		} 
+		if (letter === "[") {
+            stack.push(letter);
+        } else if (letter === ']') {
+			if (peek(stack) === '[') {
+				stack.pop();
+			} else {
+				return false;
 			}
 		}
-	}
-	for (let k = 0; k < counters.length; k++) {
-		if (counters[k] > 0) return false;
-	}	
-	return true;
+		if (letter === "{") {
+            stack.push(letter);
+        } else if (letter === '}') {
+			if (peek(stack) === '{') {
+				stack.pop();
+			} else {
+				return false;
+			}
+		}
+    }
+    return stack.length === 0;
 };
